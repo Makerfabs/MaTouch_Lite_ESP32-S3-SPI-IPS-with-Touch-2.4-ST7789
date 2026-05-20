@@ -4,7 +4,7 @@
 
 Product Link: [Matouch_Lite_ESP32-S3-SPI-IPS-with-Touch-2.4-ST7789](https://www.makerfabs.com/matouch-lite-esp32-s3-spi-resistive-touch-2-4-st7789.html)
 
-Wiki Link:  [Matouch_Lite_ESP32-S3-SPI-IPS-with-Touch-2.4-ST7789](https://wiki.makerfabs.com/Matouch%20Lite%20ESP32_S3%20SPI%20IPS%20with%20Touch%202.4%20ST7789.html)
+Wiki Link:  [Matouch_Lite_ESP32-S3-SPI-IPS-with-Touch-2.4-ST7789](https://wiki.makerfabs.com/MaTouch%20Lite%20ESP32_S3%20SPI%20IPS%20with%20Touch%202.4%20ST7789.html)
 
 Example：[LVGL_Touch](https://github.com/Makerfabs/MaTouch_Lite_ESP32-S3-SPI-IPS-with-Touch-2.4-ST7789/blob/main/README.md#lvgl_touch)
 
