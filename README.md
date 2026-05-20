@@ -6,7 +6,7 @@ Product Link: [Matouch_Lite_ESP32-S3-SPI-IPS-with-Touch-2.4-ST7789](https://www.
 
 Wiki Link:  [Matouch_Lite_ESP32-S3-SPI-IPS-with-Touch-2.4-ST7789](https://wiki.makerfabs.com/Matouch%20Lite%20ESP32_S3%20SPI%20IPS%20with%20Touch%202.4%20ST7789.html)
 
-Example：[LVGL_Touch]
+Example：[LVGL_Touch](https://github.com/Makerfabs/MaTouch_Lite_ESP32-S3-SPI-IPS-with-Touch-2.4-ST7789/blob/main/README.md#lvgl_touch)
 
 ## Feature
 
