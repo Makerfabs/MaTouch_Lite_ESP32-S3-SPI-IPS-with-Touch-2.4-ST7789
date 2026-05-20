@@ -3,6 +3,10 @@ SET(SOURCES ui_Screen1.c
     ui_comp_hook.c
     ui_helpers.c
     ui_img_weather_png.c
-    ui_img_makerfabs3_png.c)
+    ui_img_temp_png.c
+    ui_img_humi_png.c
+    ui_img_co2_png.c
+    ui_img_tvoc_png.c
+    ui_img_makerfabs_png.c)
 
 add_library(ui ${SOURCES})

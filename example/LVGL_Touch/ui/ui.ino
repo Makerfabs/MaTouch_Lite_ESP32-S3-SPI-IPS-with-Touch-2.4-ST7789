@@ -8,11 +8,20 @@
 #include "Adafruit_SHT31.h"
 #include "NS2009.h"
 
+#include <WiFi.h>
+#include "time.h"
+
 #define I2C_SDA_PIN 5
 #define I2C_SCL_PIN 4
 #define TOUCH_SDA_PIN 10
 #define TOUCH_SCL_PIN 9
 
+const char* ssid       = "Makerfabs_SH";
+const char* password   = "20160704";
+
+const char* ntpServer = "ntp.aliyun.com";
+const long  gmtOffset_sec = 8 * 3600;
+const int   daylightOffset_sec = 0;
 
 Adafruit_SHT31 sht31;
 Adafruit_SGP30 sgp;
@@ -27,6 +36,11 @@ float h = 0.0;
 float t = 0.0;
 int TVOC = 0;
 int eCO2 = 0;
+
+String currentTime = "";
+String currentDate = "";
+unsigned long lastTimeUpdate = 0;
+const unsigned long TIME_UPDATE_MS = 1000;
 
 static const uint16_t screenWidth  = 240;
 static const uint16_t screenHeight = 320;
@@ -77,6 +91,38 @@ uint32_t getAbsoluteHumidity(float temperature, float humidity)
     const float absoluteHumidity = 216.7f * ((humidity / 100.0f) * 6.112f * exp((17.62f * temperature) / (243.12f + temperature)) / (273.15f + temperature));
     const uint32_t absoluteHumidityScaled = static_cast<uint32_t>(1000.0f * absoluteHumidity);
     return absoluteHumidityScaled;
+}
+
+void updateLocalTimeText()
+{
+    time_t now = time(nullptr);
+
+    if (now < 100000) {
+        currentTime = "--:--:--";
+        currentDate = "---- -- --";
+        return;
+    }
+
+    struct tm timeinfo;
+    localtime_r(&now, &timeinfo);
+
+    char timeStr[16];
+    strftime(timeStr, 16, "%H:%M:%S", &timeinfo);
+    currentTime = String(timeStr);
+
+    char dateStr[32];
+    strftime(dateStr, 32, "%Y-%m-%d", &timeinfo);
+    currentDate = String(dateStr);
+}
+
+void initWiFi()
+{
+    WiFi.begin(ssid, password);
+    int timeout = 0;
+    while (WiFi.status() != WL_CONNECTED && timeout < 15) {
+        delay(500);
+        timeout++;
+    }
 }
 
 void sensor_init()
@@ -139,7 +185,27 @@ void updateSensorData()
     }
 }
 
+void updateTimeScreen()
+{
+    if(currentTime == "") return;
+  
+    static char lastTime[32] = "";
+    char timeText[32];
+    currentTime.toCharArray(timeText, 32);
+
+    if (strcmp(timeText, lastTime) != 0) {
+        strcpy(lastTime, timeText);
+        lv_label_set_text(ui_Label9, timeText);
+    }
+}
+
 void checkScreenAutoOff() {
+    static bool firstRun = true;
+    if(firstRun){
+        lastTouchTime = millis();
+        firstRun = false;
+    }
+
     if (screenOn && millis() - lastTouchTime > SCREEN_OFF_MS) {
         screenOn = false;
         digitalWrite(TFT_BL, LOW);
@@ -155,18 +221,14 @@ void setup()
 {
     Serial.begin(115200);
 
+    // 
     pinMode(TFT_BL, OUTPUT);
     digitalWrite(TFT_BL, HIGH);
 
-    String LVGL_Arduino = "Hello Arduino! ";
-    LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
-    Serial.println(LVGL_Arduino);
+    initWiFi();
+    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
     lv_init();
-
-#if LV_USE_LOG != 0
-    lv_log_register_print_cb(my_print);
-#endif
 
     tft.begin();
     tft.setRotation(0);
@@ -194,10 +256,7 @@ void setup()
     touch.Calibrate(CALIBRATE_MIN_X, CALIBRATE_MAX_X, CALIBRATE_MIN_Y, CALIBRATE_MAX_Y);
 
     ui_init();
-
     updateSensorData();
-
-    Serial.println("Setup done");
 }
 
 void loop()
@@ -209,7 +268,12 @@ void loop()
         updateSensorData();
     }
 
+    if (millis() - lastTimeUpdate > TIME_UPDATE_MS) {
+        lastTimeUpdate = millis();
+        updateLocalTimeText();
+        updateTimeScreen();
+    }
+
     checkScreenAutoOff();
     delay(5);
 }
-
