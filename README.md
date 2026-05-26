@@ -1,6 +1,6 @@
 # Matouch_Lite_ESP32-S3-SPI-IPS-with-Touch-2.4-ST7789
 
-## Introduce
+## Introduction
 
 The MaTouch Lite 2.4 adopts an SPI screen driven by ST7789 chip with a resolution of 320×240, matched with NS2009 resistive touch screen. It is equipped with ESP32-S3 main controller, built-in 16M Flash and 8M PSRAM. Adopting SPI display design, plenty of reserved GPIOs are available for secondary development via GPIO expansion interface. It also comes with SD card interface and USB native/USB2UART port.
 
